@@ -52,12 +52,40 @@
 #define JUMP_MASK                   0x03FFFFFFF
 #define GET_INST_JUMP(instr)        ((instr & JUMP_MASK) >> JUMP_OFFSET)
 
-/* Defines for control-unit */
-#define R_TYPE                      0x0
-#define JUMP                        0x2
-#define BRANCH                      0x4
-#define LW                          0x23
-#define SW                          0x28
+/* Opcode Encoding */
+#define OP_RTYPE                    0x00
+#define OP_JUMP                     0x02
+#define OP_JAL                      0x03
+#define OP_BRANCH                   0x04
+#define OP_BNE                      0X05    /* Not Implemented */
+#define OP_ADDI                     0x08
+#define OP_ADDIU                    0x09
+#define OP_SLTI                     0x0A
+#define OP_SLTIU                    0x0B
+#define OP_ANDI                     0x0C
+#define OP_ORI                      0x0D
+#define OP_XORI                     0x0E
+#define OP_LUI                      0x0F
+#define OP_LW                       0x23
+#define OP_SW                       0x28
+
+/* Function Field Encoding */
+#define FUNCT_SLL                   0x00
+#define FUNCT_SRL                   0x02
+#define FUNCT_SRA                   0x03
+#define FUNCT_JR                    0x08    /* Not Implemented */
+#define FUNCT_JALR                  0x09    /* Not Implemented */
+#define FUNCT_SYSCALL               0x0C
+#define FUNCT_ADD                   0x20
+#define FUNCT_ADDU                  0x21
+#define FUNCT_SUB                   0x22
+#define FUNCT_SUBU                  0x23
+#define FUNCT_AND                   0x24
+#define FUNCT_OR                    0x25
+#define FUNCT_XOR                   0x26
+#define FUNCT_NOR                   0x27
+#define FUNCT_SLT                   0x2A
+#define FUNCT_SLTU                  0x2B
 
 /* ALU control signals */
 #define ALU_AND                     0x0
@@ -66,7 +94,10 @@
 #define ALU_SUB                     0x6
 #define ALU_SLT                     0x7
 #define ALU_SLL                     0x8     /* Custom */
-#define ALU_SRL                     0x9     /* Custon */
+#define ALU_SRL                     0x9     /* Custom */
+#define ALU_SRA                     0xA     /* Custom */
+#define ALU_XOR                     0xB     /* Custom */
+#define ALU_NOR                     0xC     /* Custom */
 
 /*
  * ==========================================================================
@@ -99,8 +130,10 @@ struct register_file {
 
 struct control_unit {
     uint8_t     opcode;
+    uint8_t     funct;
     uint8_t     reg_dst;
-    uint8_t     alu_src;
+    uint8_t     alu_src_1;
+    uint8_t     alu_src_2;
     uint8_t     mem_to_reg;
     uint8_t     reg_write;
     uint8_t     mem_read;
@@ -153,7 +186,8 @@ static uint32_t w_pc_adder;
 
 /* Wires out of control-unit */
 static uint8_t  w_ctl_reg_dst;
-static uint8_t  w_ctl_alu_src;
+static uint8_t  w_ctl_alu_src_1;
+static uint8_t  w_ctl_alu_src_2;
 static uint8_t  w_ctl_mem_to_reg;
 static uint8_t  w_ctl_reg_write;
 static uint8_t  w_ctl_mem_read;
@@ -175,7 +209,8 @@ static uint32_t w_branch_control;
 
 /* Wires out of different multiplexors in the processor */
 static uint32_t w_mux_reg_file_in;
-static uint32_t w_mux_alu_in;
+static uint32_t w_mux_alu_in_1;
+static uint32_t w_mux_alu_in_2;
 static uint32_t w_mux_beq;
 static uint32_t w_mux_next_pc;
 
@@ -216,9 +251,14 @@ static struct multiplexor   mux_reg_file_in =
         .name   = "mux_reg_file_in",
     };
 
-static struct multiplexor   mux_alu_in =
+static struct multiplexor   mux_alu_in_1 =
     {
-        .name   = "mux_alu_in",
+        .name   = "mux_alu_in_1",
+    };
+
+static struct multiplexor   mux_alu_in_2 =
+    {
+        .name   = "mux_alu_in_2",
     };
 
 static struct multiplexor   mux_reg_file_data = 
