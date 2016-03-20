@@ -56,8 +56,8 @@
 #define OP_RTYPE                    0x00
 #define OP_JUMP                     0x02
 #define OP_JAL                      0x03
-#define OP_BRANCH                   0x04
-#define OP_BNE                      0X05    /* Not Implemented */
+#define OP_BEQ                      0x04
+#define OP_BNE                      0X05   
 #define OP_ADDI                     0x08
 #define OP_ADDIU                    0x09
 #define OP_SLTI                     0x0A
@@ -138,7 +138,8 @@ struct control_unit {
     uint8_t     reg_write;
     uint8_t     mem_read;
     uint8_t     mem_write;
-    uint8_t     branch;
+    uint8_t     beq;   
+    uint8_t     bne;   
     uint8_t     jump;
 };
 
@@ -192,7 +193,8 @@ static uint8_t  w_ctl_mem_to_reg;
 static uint8_t  w_ctl_reg_write;
 static uint8_t  w_ctl_mem_read;
 static uint8_t  w_ctl_mem_write;
-static uint8_t  w_ctl_branch;
+static uint8_t  w_ctl_beq;   
+static uint8_t  w_ctl_bne;   
 static uint8_t  w_ctl_jump;
 
 /* Wire out of jump-shifter */
@@ -240,7 +242,6 @@ static struct alu           pc_adder;
 static struct alu           jump_shift;
 static struct alu           immd_shift;
 static struct alu           branch_adder;
-static struct alu           branch_control;
 static struct memory        memory;
 
 /* Wire out of sign-extension unit */

@@ -239,12 +239,21 @@ uint8_t instruction_execute(void)
 
     /* Now the branch decision can be taken */
     if (status == SUCCESS) {
-        branch_control.input_1          = w_ctl_branch;
-        branch_control.input_2          = w_zero;
-        branch_control.alu_ctl          = ALU_AND;
-
-        /* Execute the ALU process to take branch decision */
-        status = alu_process(&branch_control, &w_branch_control, &w_ground);
+        /* FIXME: This is not in accordance with the module overall 
+           Take the branch decision */
+        if (w_ctl_beq == TRUE && w_ctl_bne == FALSE && w_zero == TRUE) {
+            w_branch_control = TRUE;
+            status = SUCCESS;
+        } else if (w_ctl_beq == FALSE && w_ctl_bne == TRUE && w_zero == FALSE) {
+            w_branch_control = TRUE;
+            status = SUCCESS;
+        } else if (w_ctl_beq == TRUE && w_ctl_bne == TRUE) {
+            printf("[ERR] Fatal Error in branch controller\n");
+            status = FAILURE;
+        } else {
+            w_branch_control = FALSE;
+            status = SUCCESS;
+        }
     }
 
     /* Execute the multiplexor process to select between branch and pc + 4 */
@@ -355,7 +364,8 @@ uint8_t generate_control_signals(void)
             ctl_unit.reg_write  = 1;
             ctl_unit.mem_read   = 0;
             ctl_unit.mem_write  = 0;
-            ctl_unit.branch     = 0;
+            ctl_unit.beq        = 0;
+            ctl_unit.bne        = 0;
             ctl_unit.jump       = 0;
             break;
 
@@ -374,7 +384,8 @@ uint8_t generate_control_signals(void)
             ctl_unit.reg_write  = 1;
             ctl_unit.mem_read   = 0;
             ctl_unit.mem_write  = 0;
-            ctl_unit.branch     = 0;
+            ctl_unit.beq        = 0;
+            ctl_unit.bne        = 0;
             ctl_unit.jump       = 0;
             break;
 
@@ -386,11 +397,13 @@ uint8_t generate_control_signals(void)
             ctl_unit.reg_write  = 0;
             ctl_unit.mem_read   = 0;
             ctl_unit.mem_write  = 0;
-            ctl_unit.branch     = 0;
+            ctl_unit.beq        = 0;
+            ctl_unit.bne        = 0;
             ctl_unit.jump       = 1;
             break;
 
-        case OP_BRANCH:
+        case OP_BEQ:   
+        case OP_BNE:
             ctl_unit.reg_dst    = 0;
             ctl_unit.alu_src_1  = 0;
             ctl_unit.alu_src_2  = 0;
@@ -398,7 +411,8 @@ uint8_t generate_control_signals(void)
             ctl_unit.reg_write  = 0;
             ctl_unit.mem_read   = 0;
             ctl_unit.mem_write  = 0;
-            ctl_unit.branch     = 1;
+            ctl_unit.beq        = (ctl_unit.opcode == OP_BEQ);
+            ctl_unit.bne        = (ctl_unit.opcode == OP_BNE);
             ctl_unit.jump       = 0;
             break;
 
@@ -410,7 +424,8 @@ uint8_t generate_control_signals(void)
             ctl_unit.reg_write  = 1;
             ctl_unit.mem_read   = 1;
             ctl_unit.mem_write  = 0;
-            ctl_unit.branch     = 0;
+            ctl_unit.beq        = 0;
+            ctl_unit.bne        = 0;
             ctl_unit.jump       = 0;
             break;
 
@@ -422,7 +437,8 @@ uint8_t generate_control_signals(void)
             ctl_unit.reg_write  = 0;
             ctl_unit.mem_read   = 0;
             ctl_unit.mem_write  = 1;
-            ctl_unit.branch     = 0;
+            ctl_unit.beq        = 0;
+            ctl_unit.bne        = 0;
             ctl_unit.jump       = 0;
             break;
 
@@ -446,7 +462,8 @@ uint8_t generate_control_signals(void)
         w_ctl_reg_write     = ctl_unit.reg_write;
         w_ctl_mem_read      = ctl_unit.mem_read;
         w_ctl_mem_write     = ctl_unit.mem_write;
-        w_ctl_branch        = ctl_unit.branch;
+        w_ctl_beq           = ctl_unit.beq;   
+        w_ctl_bne           = ctl_unit.bne;   
         w_ctl_jump          = ctl_unit.jump;
     }
 
@@ -532,7 +549,7 @@ uint8_t alu_control_process(struct alu_control *alu_ctl, uint8_t *w_alu_ctl_in)
             alu_ctl->alu_ctl_in = ALU_ADD;
             break;
 
-        case OP_BRANCH:
+        case OP_BEQ:   
         case OP_BNE:
             alu_ctl->alu_ctl_in = ALU_SUB;
             break;
@@ -788,7 +805,8 @@ void control_debug(void)
     printf("RegWrite        : %d\n", w_ctl_reg_write);
     printf("MemRead         : %d\n", w_ctl_mem_read);
     printf("MemWrite        : %d\n", w_ctl_mem_write);
-    printf("Branch          : %d\n", w_ctl_branch);
+    printf("BEQ             : %d\n", w_ctl_beq);    
+    printf("BNE             : %d\n", w_ctl_bne);    
     printf("Jump            : %d\n", w_ctl_jump);
 
     return;
