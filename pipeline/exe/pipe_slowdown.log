@@ -1,0 +1,86 @@
+-- Nonstandard AppRules are being used
+-- MAKIN: /opt/srcci/comp/lib/AppRules.make
+-- Warning: debug execution mode has been renamed dbg
+make execution_mode=dbg 
+-- Nonstandard AppRules are being used
+-- MAKIN: /opt/srcci/comp/lib/AppRules.make
+make[1]: Entering directory `/export/KU/kuclass01/f/MIPS_SIM/sandbox'
+gcc 	 -fopenmp -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7   -c -o main.o main.c
+gcc 	 -fopenmp -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7   -c -o shell.o shell.c
+gcc 	 -fopenmp -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7   -c -o sim.o sim.c
+mcc -log  -macropath /opt/srcci/carte54/lib/macros -srcinfopath /opt/srcci/carte54/lib/macros/map_m/carte.info:/opt/srcci/carte54/lib/macros/map_m/src_ieee_v1.info -maptarget map_m     -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7   -user_debug mips_map.mc
+Inizio/MAP Linux Release 5.4(0.0)
+Copyright 2002, SRC Computers, LLC  All Rights Reserved.
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 67)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 98)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 99)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 100)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 101)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 143)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 144)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 172)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 173)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 174)
+warning (Inizio, #0095): Type cast required for this conversion (mips_map.mc: 175)
+ Debug source code generation 
+Inizio/MAP Linux Release 5.4(0.0): compilation completed with warnings
+
+Inizio Release 
+Copyright 2002, SRC Computers, LLC  All Rights Reserved.
+info (martello, #4):
+    stream 'SC1' parallels other streams to a consumer; throughput may be affected
+info (martello, #4):
+    stream 'SC2' parallels other streams to a consumer; throughput may be affected
+info (martello, #4):
+    stream 'SC3' parallels other streams to a consumer; throughput may be affected
+info (martello, #4):
+    stream 'SC4' parallels other streams to a consumer; throughput may be affected
+info (martello, #4):
+    stream 'SD1' parallels other streams to a consumer; throughput may be affected
+info (martello, #4):
+    stream 'SD2' parallels other streams to a consumer; throughput may be affected
+Parallel region starting at line 44 has 5 parallel sections.
+Notice (martello): detailed scheduling of loop, line 142,
+  added 17 additional clocks to each iteration; final slowdown is 22.
+
+######################################################################
+##################        INNER LOOP SUMMARY      ####################
+loop on line 30:
+    clocks per iteration:    1
+    pipeline depth:          5
+
+loop on line 36:
+    clocks per iteration:    1
+    pipeline depth:          5
+
+loop on line 51:
+    clocks per iteration:    1
+    pipeline depth:         26
+
+loop on line 66:
+    clocks per iteration:    2
+    pipeline depth:          3
+    loop-carried var 'PC' required 1 additional clock
+
+loop on line 96:
+    clocks per iteration:    3
+    pipeline depth:         31
+    multiple reads of 'OBM bank B' required 1 additional clock
+    loop-carried var 'alu_out_ie' required 2 additional clocks
+
+loop on line 142:
+    clocks per iteration:   23
+    pipeline depth:         72
+    mixed reads and writes on 'OBM bank C' required 3 additional clocks
+
+loop on line 171:
+    clocks per iteration:    4
+    pipeline depth:          5
+    multiple writes to 'OBM bank B' required 3 additional clocks
+######################################################################
+
+gcc 	 -fopenmp -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7    -c -o mips_map_dbg.o mips_map_dbg.c
+-- explicit link dbg
+gcc	  -fopenmp  main.o shell.o sim.o mips_map_dbg.o   -L /opt/srcci/carte54/lib -ldl -ldl -lsrc -lsrcutil  -lstdc++ -lm -lpthread -lrt -ldebug -lm -lrt -o mips_map.dbg
+ln -sf mips_map.dbg mips_map
+make[1]: Leaving directory `/export/KU/kuclass01/f/MIPS_SIM/sandbox'

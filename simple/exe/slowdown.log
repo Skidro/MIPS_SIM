@@ -1,0 +1,44 @@
+-- Nonstandard AppRules are being used
+-- MAKIN: /opt/srcci/comp/lib/AppRules.make
+-- Warning: debug execution mode has been renamed dbg
+make execution_mode=dbg 
+-- Nonstandard AppRules are being used
+-- MAKIN: /opt/srcci/comp/lib/AppRules.make
+make[1]: Entering directory `/export/KU/kuclass01/golden/MIPS_SIM/src'
+gcc 	 -fopenmp -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7   -c -o main.o main.c
+gcc 	 -fopenmp -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7   -c -o shell.o shell.c
+gcc 	 -fopenmp -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7   -c -o sim.o sim.c
+mcc -log  -macropath /opt/srcci/carte54/lib/macros -srcinfopath /opt/srcci/carte54/lib/macros/map_m/carte.info:/opt/srcci/carte54/lib/macros/map_m/src_ieee_v1.info -maptarget map_m     -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7   -user_debug mips_map.mc
+Inizio/MAP Linux Release 5.4(0.0)
+Copyright 2002, SRC Computers, LLC  All Rights Reserved.
+ Debug source code generation 
+
+Inizio Release 
+Copyright 2002, SRC Computers, LLC  All Rights Reserved.
+Notice (martello): detailed scheduling of loop, line 53,
+  added 1 additional clocks to each iteration; final slowdown is 59.
+
+######################################################################
+##################        INNER LOOP SUMMARY      ####################
+loop on line 37:
+    clocks per iteration:    1
+    pipeline depth:          5
+
+loop on line 43:
+    clocks per iteration:    1
+    pipeline depth:          5
+
+loop on line 53:
+    clocks per iteration:   60
+    pipeline depth:          6
+    mixed reads and writes on 'OBM bank B' required 8 additional clocks
+    mixed reads and writes on 'OBM bank C' required 3 additional clocks
+    memory dependency on 'OBM bank B' required 58 additional clocks
+    loop-carried var 'PC' required 58 additional clocks
+######################################################################
+
+gcc 	 -fopenmp -DCARTE_EX_MODE_DBG -I .  -I /opt/srcci/carte54/include -I /opt/srcci/carte54/include/src7    -c -o mips_map_dbg.o mips_map_dbg.c
+-- explicit link dbg
+gcc	  -fopenmp  main.o shell.o sim.o mips_map_dbg.o   -L /opt/srcci/carte54/lib -ldl -ldl -lsrc -lsrcutil  -lstdc++ -lm -lpthread -lrt -ldebug -lm -lrt -o mips_map.dbg
+ln -sf mips_map.dbg mips_map
+make[1]: Leaving directory `/export/KU/kuclass01/golden/MIPS_SIM/src'

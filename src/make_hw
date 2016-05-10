@@ -1,3 +1,0 @@
-
-qsub -d./ ~/pbs_hw
-

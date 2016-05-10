@@ -1,12 +1,15 @@
 MIPS Processor 32-bit
-This repository contains code for the 32-bit mips processor (without pipelining). The code is written in map-c and it is hardware sythesizable on SRC machine.
+This repository contains code for the 32-bit mips processor. There are two main folders which contain code for the single cycle as well as pipeline implementation
+of the processor. The single cycle implementation has been tested with all the configurations and test scripts and it is verified to be working correctly both in 
+hardware and simulator. The pipeline implementation on the other hand could not be completed to the fullest. It just works with one test script i.e. simple_pipe.hex.
+The code in both the directories is written in map-c and it is hardware sythesizable on SRC machine.
 The directories in this repository are organized as follow:
 
 1. src 
    Contains the source code for hardware executable (in map-c), simulator (in c) and related header files. It also contains the scripts required for building the code.
 
 2. exe
-   Contains a pre-compiled hardware executable for map-c code. The log file generated while building this executable is also present in this directory.
+   Contains a pre-compiled hardware executable for map-c code. The important log files generated while building this executable are also present in this directory.
 
 3. tests
    Contains simple test files to verify the functionaility of MIPS machine. The .hex files can be given as input to the executables and the corresponding *.s files
@@ -36,7 +39,7 @@ In order to build this project, do the following:
 
 5. The precompiled hardware executable can be used as is. To run it, do the following:
    >>cd exe
-   >>./hw_exe <hex_file>
+   >>./<exe_name> <hex_file>
 
 6. The execution results are generated in the same directory as the one containing the executable files. These results can be seen in "res_map" and "res_cpu" files.
    The "res_map" file contains the output from the map-c executable whereas the "res_cpu" file contains the output from the simulator code. The contents of these
